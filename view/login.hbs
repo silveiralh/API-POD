@@ -28,13 +28,13 @@
                 <article>
                     <div class=" picture align-content">
                     <div class="cadastro-content">
-                        <div class="form-cadastro">
-                            <form class="form-login mx-auto text-center ">
+                        <div class="form-cadastro ">
+                            <form class="form-login mx-auto text-center " method="post">
                                 <h2 class="text-center my-3 text-dark">Login</h2>
-
-                                <input type="username" id="inputUsername" class="form-control my-2" placeholder="Username" required autofocus></input>
-                                <input type="password" id="inputPassword" class="form-control " placeholder="Senha" required></input>
-                                <button class=" mt-2 my-2"type="button">Entrar</button>
+                                <input type="text" id="inputUsername" class="form-control my-2" placeholder="Username"name="username"  required autofocus></input>
+                                <input type="password" id="inputPassword" class="form-control " placeholder="Senha" name="password" required></input>
+                                <div class="error" id="error"></div> 
+                                <button class=" mt-2 my-2" id="entrar" type="submit">Entrar</button>
 
                                 <div class="text-center">
                                     <a href="/register" class="text-decoration-none link mx-3 mt-2 ">Cadastrar</a>
@@ -47,5 +47,21 @@
             </main> 
         </div> 
     </div> 
+    <script type="text/javascript">
+		document.querySelector("#entrar").addEventListener("click",verificaCampos);
+		
+		
+		function verificaCampos(){
+			var username =  document.querySelector("#inputUsername").value
+			var password = document.querySelector("#inputPassword").value
+            var error = document.getElementById("error");
+			if (username == "" || password == ""){
+				error.innerHTML= "Os campos não podem estar vazios!";
+			}else{
+                error.innerHTML= "";
+            }
+		}
+
+	</script>
 </body>
 </html>
