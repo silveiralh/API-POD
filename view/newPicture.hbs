@@ -32,31 +32,31 @@
                         <div class="col-12 text-center">
                             <h4 class="mx-auto mt-4">Cadastro de imagem do dia</h4>
                         </div>
-                        <form class="mx-auto">
+                        <form class="mx-auto" method="post">
                             <div class="row form-group ">
                                 <div class="col-6 ">
                                     <label>Titulo</label>
-                                    <input  type="text" class="ml-1 form-control" value="" required />
+                                    <input  type="text" class="ml-1 form-control" name="tittle" value="" required />
                                 </div>
                                 <div class="col-6 ">
                                     <label>Autor</label>
-                                    <input type="text" class="ml-1 form-control" value="" required />
+                                    <input type="text" class="ml-1 form-control" name="author" value="" required />
                                 </div>
                             </div>
                             <div class="row form-group ">
                                 <div class="col-6 ">
                                     <label>Data</label>
-                                    <input  type="date" class="ml-1 form-control" value="" required />
+                                    <input  type="date" class="ml-1 form-control" name="date" required />
                                 </div>
                                 <div class="col-6 ">
                                     <label>Imagem</label>
-                                    <input type="file" class="ml-1 form-control" value="" required />
+                                    <input type="file" class="ml-1 form-control" name="picture"  />
                                 </div>
                             </div>
                             <div class="mt-4 mx-auto form-group">
                                 <label>Descrição</label>
-                                <textarea type="text" class="form-control" value="" required ></textarea>
-                                <button  class=" mt-5" type="button">Registrar imagem</button>
+                                <textarea type="text" class="form-control" value="" name="description" required ></textarea>
+                                <button  class=" mt-5" type="submit">Registrar imagem</button>
                             </div>
                             
                         </form>

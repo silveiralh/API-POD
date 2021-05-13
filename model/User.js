@@ -3,7 +3,7 @@ const Mongo = require('mongodb').MongoClient;
 module.exports = class Users{
 	
     static async logar(username,password){
-		
+		console.log(username+password);
 		const mongo = await Mongo.connect('mongodb://localhost/pod-api', {
 			useNewUrlParser: true,
 			useUnifiedTopology: true
