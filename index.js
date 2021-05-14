@@ -2,11 +2,12 @@ const http = require('http');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const express =require('express');
+
 // const multer = require('multer');
 // código para upload de imagens usando multer  https://www.youtube.com/watch?v=YM5TTZm8yRY&ab_channel=Maransatto
 // const upload = multer({destination:'public/uploads'});
 app = express();
-
+port = process.env.PORT || 3000;
 //models
 User = require ('./model/User');
 PictureOfTheDay = require ('./model/PictureOfTheDay');
@@ -95,4 +96,4 @@ app.post('/newPicture',
 	res.redirect('/newPicture');
 });
 
-app.listen(3000);
+app.listen(port);

@@ -1,10 +1,10 @@
 const Mongo = require('mongodb').MongoClient;
-
+var connection = 'mongodb+srv://TestBD:JNsGPhUddzOkIOwa@cluster0.nkcf1.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
 module.exports = class PictureOfTheDay{
 	static async cadastrar(tittle, date, author, description, 
         // picture
         ){
-		const mongo = await Mongo.connect('mongodb://localhost/pod-api', {
+		const mongo = await Mongo.connect(connection, {
 			useNewUrlParser: true,
 			useUnifiedTopology: true
 		});
@@ -28,7 +28,7 @@ module.exports = class PictureOfTheDay{
 	}
 
 	static async buscar(query){
-		let mongo = await Mongo.connect('mongodb://localhost/pod-api', {
+		let mongo = await Mongo.connect(connection, {
 			useNewUrlParser: true,
 			useUnifiedTopology: true
 		});
