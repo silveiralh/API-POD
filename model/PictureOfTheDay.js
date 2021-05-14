@@ -2,7 +2,7 @@ const Mongo = require('mongodb').MongoClient;
 var connection = 'mongodb+srv://TestBD:JNsGPhUddzOkIOwa@cluster0.nkcf1.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
 module.exports = class PictureOfTheDay{
 	static async cadastrar(tittle, date, author, description, 
-        // picture
+        picture
         ){
 		const mongo = await Mongo.connect(connection, {
 			useNewUrlParser: true,
@@ -17,7 +17,7 @@ module.exports = class PictureOfTheDay{
                 date: date,
                 author: author, 
                 description: description,
-                // picture:pic
+                picture:picture
                 });
 		}
  

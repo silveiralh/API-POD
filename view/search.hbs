@@ -22,7 +22,9 @@
                     <p></p>
                     <hr>
                     <p class=" itemMenu"><a href="/newPicture">nova Imagem </a></p>
-                    <p class=" itemMenu"><a href="/">sair </a></p>
+                </form>
+                <form method="post">
+                    <button id="sair" type="submit">SAIR</button>
                 </form>
             </div>
 
@@ -30,10 +32,10 @@
         <div class="content">
             <main class="row">
                 <article>
-                    <div class="picture">
-                        <img id="picture" src="{{""}}" alt="">
-                    </div>
                     {{#picture}}
+                    <div class="picture">
+                        <img id="picture"  src="data:image/png;base64, {{imagem}}" alt="">
+                    </div>
                     <div>
                         <h1 class="title" id="tittle">{{tittle}}</h1>
                         <ul>

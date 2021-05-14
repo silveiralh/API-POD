@@ -19,7 +19,7 @@ module.exports = class Users{
 		if(answer.length>0){
 			return answer[0].admin;
 		}else{
-			return "NULL";
+			return -1;
 		}
 	}
 
