@@ -2,7 +2,9 @@ const http = require('http');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const express =require('express');
-
+// const multer = require('multer');
+// código para upload de imagens usando multer  https://www.youtube.com/watch?v=YM5TTZm8yRY&ab_channel=Maransatto
+// const upload = multer({destination:'public/uploads'});
 app = express();
 
 //models
@@ -31,10 +33,14 @@ app.get('/newPicture', (req, res) =>{
 	res.render('newPicture',{username: req.cookies.login});
 });
 
-app.get('/search', (req, res) =>{
-	res.render('search',{username: req.cookies.login});
+app.get('/search',   async (req, res) =>{
+	if(req.cookies && req.cookies.login){
+		const picture = await PictureOfTheDay.buscar(req.query.date) ;
+		res.render('search',{picture:picture});
+	}else{
+		res.redirect('/newPicture');
+	}
 });
-
 
 //rotas post
 app.post('/search', async (req,res) =>{
@@ -74,14 +80,15 @@ app.post('/register',  async (req,res) =>{
 	res.redirect('/search');
 });
 
-app.post('/newPicture', async (req,res) =>{
+app.post('/newPicture', 
+	// upload.single('picture'), 
+	async (req,res) =>{
+
 	const tittle = req.body.tittle;
 	const date = req.body.date;
 	const author = req.body.author;
 	const description = req.body.description;
-	const picture = req.body.picture;
 	console.log(tittle + "  "+ date);
-
 	if(tittle!==""&&date!==""&&author!==""&&description!==""){//se não possui campos vazios cadastra
 		item = await PictureOfTheDay.cadastrar(tittle, date, author, description);
 	}

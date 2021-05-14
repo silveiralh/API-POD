@@ -1,13 +1,14 @@
 const Mongo = require('mongodb').MongoClient;
 
 module.exports = class PictureOfTheDay{
-	static async cadastrar(tittle, date, author, description){
+	static async cadastrar(tittle, date, author, description, 
+        // picture
+        ){
 		const mongo = await Mongo.connect('mongodb://localhost/pod-api', {
 			useNewUrlParser: true,
 			useUnifiedTopology: true
 		});
 		const db = mongo.db();
-
 		const pictures =  await db.collection('pictures').find({ date: date}).toArray();
 
 		if (tittle!==""&&date!==""&&author!==""&&description!==""){
@@ -15,28 +16,30 @@ module.exports = class PictureOfTheDay{
                 tittle: tittle,
                 date: date,
                 author: author, 
-                description: description
+                description: description,
+                // picture:pic
                 });
 		}
-
+ 
 
 		mongo.close();
 
 		return "OK";
 	}
 
-	static async buscar(busca){
-		const mongo = await Mongo.connect('mongodb://localhost/pod-api', {
+	static async buscar(query){
+		let mongo = await Mongo.connect('mongodb://localhost/pod-api', {
 			useNewUrlParser: true,
 			useUnifiedTopology: true
 		});
 		const db = mongo.db();
-		const result = null;
+		let result = null;
 
-		if(busca){
-			result =  await db.collection('pictures').find({ nome: new RegExp('^' + busca)} ).toArray();
+		if(query){
+            console.log(query);
+			result =  await db.collection('pictures').findOne({ date: new RegExp('^' + query)} );
 		}
 		mongo.close();
-		return result
+		return result;
 	}
 }
