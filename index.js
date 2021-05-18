@@ -15,32 +15,34 @@ let images=[];
 var ADMIN=-1;
 
 app = express();
-port = process.env.PORT || 3000;
+port = process.env.PORT || 3100;
 
 //models
 User = require ('./model/User');
 PictureOfTheDay = require ('./model/PictureOfTheDay');
+
 // cache
+cache = cache({
+  	prefix:'pod-api',
+	host:'redis-15103.c14.us-east-1-3.ec2.cloud.redislabs.com',
+	port: 15103,
+	auth_pass:'KPdSgJnkJXOldBYlQSrzODzLSWJYBZka'
+});
 
-// cache = cache({
-// 	prefix:'redis-test',
-// 	host:'redis',
-// 	port: 6379
-// });
+//FUNÇÃO DE INVALIDAÇÃO DO PROFESSOR
+cache.invalidate = (name) => {
+	return (req, res, next) => {
+		const route_name = name ? name : req.url;
+		if (!cache.connected) {
+			next();
+			return ;
+		}
+		cache.del(route_name, (err) => console.log(err));
+		next();
+	};
+};
 
-// //FUNÇÃO DE INVALIDAÇÃO DO PROFESSOR
-// cache.invalidate = (name) => {
-// 	return (req, res, next) => {
-// 		const route_name = name ? name : req.url;
-// 		if (!cache.connected) {
-// 			next();
-// 			return ;
-// 		}
-// 		cache.del(route_name, (err) => console.log(err));
-// 		next();
-// 	};
-// };
-
+//template para renderizar handlebars
 app.set('view engine','hbs');
 app.set('views',path.join(__dirname,'view'));
 app.use(express.static(path.join(__dirname,'styles')));
@@ -50,14 +52,19 @@ app.use(express.urlencoded({
 app.use(cookieParser());
 
 // rotas get
-app.get('/', (req, res) =>{
+app.get('/', cache.invalidate(), (req, res) =>{
 	if(req.cookies && req.cookies.login){
+		
+		console.log("console para ver se passa");
 		if(ADMIN==1){
+			console.log(ADMIN+"ADMIN")
 			res.redirect('/newPicture');
 		}else if(ADMIN==0){
+			console.log(ADMIN+"ADMIN")
 			res.redirect('/search');
 		}
 	}else{
+		console.log(ADMIN+"ADMIN")
 		res.render('login');
 	}
 });
@@ -86,9 +93,7 @@ app.get('/newPicture', (req, res) =>{
 	}
 });
 
-app.get('/search', 
-	// cache.route(),
-	  async (req, res) =>{
+app.get('/search', async (req, res) =>{
 	if(req.cookies && req.cookies.login ){
 		if(ADMIN==-1){
 			res.redirect('/');
@@ -100,22 +105,24 @@ app.get('/search',
 		res.redirect('/');
 	}
 });
-
-//rotas post
-app.post('/search', async (req,res) =>{ //clicar em sair(ainda não funciona)
+ 
+app.get('/logout',cache.invalidate(),  async (req,res) =>{ 
 	ADMIN=-1;
 	res.cookie('login', ADMIN);
 	console.log(ADMIN +"aqui");
+	res.clearCookie('login');
 	res.clearCookie('connect.sid');
 	res.redirect('/');
-})
+});
 
-app.post('/',async (req,res) =>{
-	const 	username = req.body.username;
-	const password = req.body.password;
+//rotas post
+
+app.post('/', async (req,res) =>{
+	const username = req.body.username;
+	const password = req.body.password;;
 	if(username!==""&&password!==""){
+		console.log(ADMIN+"oioioioi");
 		ADMIN = await User.logar(username,password);
-		console.log(ADMIN);
 		if(ADMIN!==-1){
 			res.cookie('login', ADMIN);
 			if (ADMIN==1){
@@ -130,38 +137,35 @@ app.post('/',async (req,res) =>{
 	}
 });
 
-app.post('/register',  async (req,res) =>{
-
+app.post('/register', cache.invalidate(), async (req,res) =>{
 	const email = req.body.email;
 	const username = req.body.username;
 	const password = req.body.password;
-	console.log(username+password);
-
 	if(email!=="" && username!== "" && password!==""){//se não possui campos vazios cadastra
+	console.log(username+password);
 		await User.cadastrar(email,username,password);
 	}
 	res.redirect('/');
 });
 
-app.post('/newPicture', upload.single('picture'), async (req,res) =>{
-
+app.post('/newPicture', // upload.single('picture'), 
+	async (req,res) =>{
 	const tittle = req.body.tittle;
 	const date = req.body.date;
 	const author = req.body.author;
 	const description = req.body.description;
+	let picture="";
 	console.log(tittle + "  "+ date);
 	if(req.file !== undefined){
-		imagem = req.file.buffer.toString("base64");
+		picture = req.file.buffer.toString("base64");
 	}else{
-		imagem = "noimage.png";
+		picture = "noimage.png";
 	}
 	if(tittle!==""&&date!==""&&author!==""&&description!==""){//se não possui campos vazios cadastra
-		item = await PictureOfTheDay.cadastrar(tittle, date, author, description, picture);
+		item = await PictureOfTheDay.cadastrar(tittle, date, author, description);
 	}
 	res.redirect('/newPicture');
+
 });
-
-
-
 
 app.listen(port);
