@@ -5,15 +5,12 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title>NASA API</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
     <link rel="stylesheet" href="styles.css">
-
 </head>
 
 <body>
     <div class="side">
         <header class="side-column">
-            
             <div class="light center"><input type="hidden" id="hiddenflag" name="hiddenflag" value="{{admin}}">
                 <form method="get">
                     <h2>ENTRE COM A DATA</h2>
@@ -27,15 +24,13 @@
                 </form>
                 <a class="mt-5 item" href="/logout" style="margin-left:10px; height: 35px;">Sair</a>
             </div>
-
         </header>
         <div class="content">
             <main class="row">
-                <article>
-                    {{#picture}}
+                <article>{{#picture}}
                     <div class="picture">
                         <h1></h1>
-                        <img id="picture"  src="data:image/png;base64, {{imagem}}" alt="">
+                        <img id="picture" src="data:image/png;base64, {{imagem}}" alt="">
                     </div>
                     <div>
                         <h1 class="title" id="tittle">{{tittle}}</h1>
@@ -45,33 +40,29 @@
                         </ul>
                         <h4 id="description"></h4>
                         <p id="explanation">{{description}}</p>
-                    </div>
-                    {{/picture}}
+                    </div>{{/picture}}
                     <div id="container"></div>
                     <script type="text/javascript">
-                        document.querySelector("#buscar").addEventListener("click",verificaCampo);
-                        document.querySelector("body").addEventListener("click", function(e) {
+                        document.querySelector("#buscar").addEventListener("click", verificaCampo);
+                        document.querySelector("body").addEventListener("click", function (e) {
                             var anchor = e.target.closest('a');
-                            var flag =  document.querySelector("#hiddenflag").value;
+                            var flag = document.querySelector("#hiddenflag").value;
                             var errorAccess = document.getElementById("errorAccess");
-                            if(anchor !== null) {
-                                errorAccess.innerHTML= "Acesso apenas para administrador";
+                            if (anchor !== null) {
+                                errorAccess.innerHTML = "Acesso apenas para administrador";
                             }
-                            }, false);
-                        
-                        function verificaCampo(){
-                            var date =  document.querySelector("#inputDate").value;
+                        }, false);
+
+                        function verificaCampo() {
+                            var date = document.querySelector("#inputDate").value;
                             var error = document.getElementById("error");
                             var presentation = document.getElementById("resentation");
-                            if (date == "" ){
-                                error.innerHTML= "Os campos não podem estar vazios!";
-                            }else{
-                                error.innerHTML= "";
+                            if (date == "") {
+                                error.innerHTML = "Os campos não podem estar vazios!";
+                            } else {
+                                error.innerHTML = "";
                             }
                         }
-
-
-
                     </script>
                 </article>
             </main>

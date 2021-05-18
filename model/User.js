@@ -1,11 +1,9 @@
 const Mongo = require('mongodb').MongoClient;
+//conexão online com banco mongo
 var connection = 'mongodb+srv://TestBD:JNsGPhUddzOkIOwa@cluster0.nkcf1.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
 
-
 module.exports = class Users{
-	
     static async logar(username,password){
-		console.log(username+password+"asdfasdf");
 		const mongo = await Mongo.connect(connection, {
 			useNewUrlParser: true,
 			useUnifiedTopology: true
@@ -15,7 +13,6 @@ module.exports = class Users{
             username:username,
             password:password
         }).toArray();
-		console.log(answer);
 		mongo.close();
 		if(answer.length>0){
 			return answer[0].admin;

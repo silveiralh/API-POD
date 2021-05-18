@@ -2,26 +2,31 @@ const http = require('http');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const express =require('express');
-
-const multer = require('multer');
-// código para upload de imagens usando multer  https://github.com/watinha/node-examples/tree/master/express-03-upload
-const storage = multer.memoryStorage();
-const upload = multer({destination:'public/uploads'});
 let cache = require('express-redis-cache');
 
+// código para upload de imagens usando multer  https://github.com/watinha/node-examples/tree/master/express-03-upload
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({destination:'public/uploads'});
 let images=[];
 
-//flag para saber se está logado, se é admin ou se é user normal
-var ADMIN=-1;
+var ADMIN=-1;//flag para saber se está logado, '1' - admin, '0' user, '-1' não logado
 
 app = express();
-port = process.env.PORT || 3100;
+port = process.env.PORT || 3000;//PORTA HEROKU OU LOCALHOST:3000 PARA ACESSO LOCAL
 
 //models
 User = require ('./model/User');
 PictureOfTheDay = require ('./model/PictureOfTheDay');
 
-// cache
+//template para renderizar handlebars
+app.set('view engine','hbs');
+app.set('views',path.join(__dirname,'view'));
+app.use(express.static(path.join(__dirname,'styles')));
+app.use(express.urlencoded({extended: false}));
+app.use(cookieParser());
+
+// cache com o host criado no redislabs
 cache = cache({
   	prefix:'pod-api',
 	host:'redis-15103.c14.us-east-1-3.ec2.cloud.redislabs.com',
@@ -29,8 +34,7 @@ cache = cache({
 	auth_pass:'KPdSgJnkJXOldBYlQSrzODzLSWJYBZka'
 });
 
-//FUNÇÃO DE INVALIDAÇÃO DO PROFESSOR
-cache.invalidate = (name) => {
+cache.invalidate = (name) => {//FUNÇÃO DE INVALIDAÇÃO DO PROFESSOR
 	return (req, res, next) => {
 		const route_name = name ? name : req.url;
 		if (!cache.connected) {
@@ -42,34 +46,20 @@ cache.invalidate = (name) => {
 	};
 };
 
-//template para renderizar handlebars
-app.set('view engine','hbs');
-app.set('views',path.join(__dirname,'view'));
-app.use(express.static(path.join(__dirname,'styles')));
-app.use(express.urlencoded({
-	extended: false
-	}));
-app.use(cookieParser());
-
-// rotas get
-app.get('/', cache.invalidate(), (req, res) =>{
+// ROTAS GET
+app.get('/', cache.invalidate(), (req, res) =>{//RENDERIZA PAGINA DE LOGIN
 	if(req.cookies && req.cookies.login){
-		
-		console.log("console para ver se passa");
 		if(ADMIN==1){
-			console.log(ADMIN+"ADMIN")
 			res.redirect('/newPicture');
 		}else if(ADMIN==0){
-			console.log(ADMIN+"ADMIN")
 			res.redirect('/search');
 		}
 	}else{
-		console.log(ADMIN+"ADMIN")
 		res.render('login');
 	}
 });
 
-app.get('/register', (req, res) =>{
+app.get('/register', (req, res) =>{//CADASTRO DE USUARIO
 	if(req.cookies && req.cookies.login ){
 		if(ADMIN=1){
 			res.redirect('/newPicture');
@@ -81,7 +71,7 @@ app.get('/register', (req, res) =>{
 	}
 });
 
-app.get('/newPicture', (req, res) =>{
+app.get('/newPicture', (req, res) =>{//RENDERIZA PAGINA DE CADASTRO DE IMAGEM DO DIA
 	if(req.cookies && ADMIN===1 ){
 		if(ADMIN==-1){
 			res.redirect('/');
@@ -93,7 +83,7 @@ app.get('/newPicture', (req, res) =>{
 	}
 });
 
-app.get('/search', async (req, res) =>{
+app.get('/search', async (req, res) =>{//RENDERIZA PAGINA DE BUSCA POR DATA
 	if(req.cookies && req.cookies.login ){
 		if(ADMIN==-1){
 			res.redirect('/');
@@ -106,22 +96,19 @@ app.get('/search', async (req, res) =>{
 	}
 });
  
-app.get('/logout',cache.invalidate(),  async (req,res) =>{ 
+app.get('/logout',cache.invalidate(),  async (req,res) =>{ //LOGOUT COM INVALIDAÇÃO DE CACHE E CLEAR COOKIES
 	ADMIN=-1;
 	res.cookie('login', ADMIN);
-	console.log(ADMIN +"aqui");
 	res.clearCookie('login');
 	res.clearCookie('connect.sid');
 	res.redirect('/');
 });
 
-//rotas post
-
-app.post('/', async (req,res) =>{
+//ROTAS POST
+app.post('/', async (req,res) =>{//REALIZA LOGIN
 	const username = req.body.username;
 	const password = req.body.password;;
 	if(username!==""&&password!==""){
-		console.log(ADMIN+"oioioioi");
 		ADMIN = await User.logar(username,password);
 		if(ADMIN!==-1){
 			res.cookie('login', ADMIN);
@@ -137,25 +124,23 @@ app.post('/', async (req,res) =>{
 	}
 });
 
-app.post('/register', cache.invalidate(), async (req,res) =>{
+app.post('/register', cache.invalidate(), async (req,res) =>{//REALIZA O CADASTRO DE UM NOVO USUARIO VALOR PADRÃO DE PERMISSÃO=0
 	const email = req.body.email;
 	const username = req.body.username;
 	const password = req.body.password;
 	if(email!=="" && username!== "" && password!==""){//se não possui campos vazios cadastra
-	console.log(username+password);
 		await User.cadastrar(email,username,password);
 	}
 	res.redirect('/');
 });
 
-app.post('/newPicture', // upload.single('picture'), 
+app.post('/newPicture', // upload.single('picture'), //SUBMETE OS DADOS DE CADASTRO DE UMA IMAGEM DO DIA
 	async (req,res) =>{
 	const tittle = req.body.tittle;
 	const date = req.body.date;
 	const author = req.body.author;
 	const description = req.body.description;
 	let picture="";
-	console.log(tittle + "  "+ date);
 	if(req.file !== undefined){
 		picture = req.file.buffer.toString("base64");
 	}else{
@@ -165,7 +150,6 @@ app.post('/newPicture', // upload.single('picture'),
 		item = await PictureOfTheDay.cadastrar(tittle, date, author, description);
 	}
 	res.redirect('/newPicture');
-
 });
 
 app.listen(port);

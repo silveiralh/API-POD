@@ -1,9 +1,8 @@
 const Mongo = require('mongodb').MongoClient;
 var connection = 'mongodb+srv://TestBD:JNsGPhUddzOkIOwa@cluster0.nkcf1.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+
 module.exports = class PictureOfTheDay{
-	static async cadastrar(tittle, date, author, description, 
-        picture
-        ){
+	static async cadastrar(tittle, date, author, description, picture){
 		const mongo = await Mongo.connect(connection, {
 			useNewUrlParser: true,
 			useUnifiedTopology: true
@@ -20,10 +19,7 @@ module.exports = class PictureOfTheDay{
                 picture:picture
                 });
 		}
- 
-
 		mongo.close();
-
 		return "OK";
 	}
 
@@ -34,9 +30,7 @@ module.exports = class PictureOfTheDay{
 		});
 		const db = mongo.db();
 		let result = null;
-
 		if(query){
-            console.log(query);
 			result =  await db.collection('pictures').findOne({ date: new RegExp('^' + query)} );
 		}
 		mongo.close();
