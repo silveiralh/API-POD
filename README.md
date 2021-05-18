@@ -2,14 +2,14 @@
 Repositório para o **Projeto 2** da disciplina de **Programação Web 2**
 O projeto consiste na construção de uma API semelhante à API utilizada para a busca de dados no **[Projeto 1](https://github.com/silveiralh/AJAX-API-APOD)**, utilizando **Node.js**, **Express.js** e **Mongo**.
 
-# Deploy
+## Deploy
 A instalação da aplicação da página foi feita utilizando o serviço de hospedagem **Heroku**, onde pode ser acessada através do **[link](https://api-pod.herokuapp.com/)**
 
-# Acesso ADM
+## Acesso ADM
 **user**: admin
 **password**: admin
 
-# Aluno
+## Aluno
 Luiz Henrique Carvalho Silveira - **1136658**
 
 ## Critérios 
