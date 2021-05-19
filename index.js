@@ -3,12 +3,12 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const express =require('express');
 let cache = require('express-redis-cache');
+var session = require('express-session');
 
-// código para upload de imagens usando multer  https://github.com/watinha/node-examples/tree/master/express-03-upload
+// código para upload de imagens usando multer  https://codedec.com/tutorials/image-uploading-to-mongodb-in-nodejs/
 const multer = require('multer');
 const storage = multer.memoryStorage();
-const upload = multer({destination:'public/uploads'});
-let images=[];
+const upload = multer({storage:storage});
 
 var ADMIN=-1;//flag para saber se está logado, '1' - admin, '0' user, '-1' não logado
 
@@ -25,6 +25,12 @@ app.set('views',path.join(__dirname,'view'));
 app.use(express.static(path.join(__dirname,'styles')));
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
+// app.use(session({ //não funcionou 
+//     secret: 'chave super secreta',
+//     resave: false,
+//     saveUninitialized: true,
+//     cookie: { secure: false }
+// }));
 
 // cache com o host criado no redislabs
 cache = cache({
@@ -134,7 +140,7 @@ app.post('/register', cache.invalidate(), async (req,res) =>{//REALIZA O CADASTR
 	res.redirect('/');
 });
 
-app.post('/newPicture', // upload.single('picture'), //SUBMETE OS DADOS DE CADASTRO DE UMA IMAGEM DO DIA
+app.post('/newPicture', upload.single('picture'), //SUBMETE OS DADOS DE CADASTRO DE UMA IMAGEM DO DIA
 	async (req,res) =>{
 	const tittle = req.body.tittle;
 	const date = req.body.date;
@@ -143,11 +149,9 @@ app.post('/newPicture', // upload.single('picture'), //SUBMETE OS DADOS DE CADAS
 	let picture="";
 	if(req.file !== undefined){
 		picture = req.file.buffer.toString("base64");
-	}else{
-		picture = "noimage.png";
 	}
 	if(tittle!==""&&date!==""&&author!==""&&description!==""){//se não possui campos vazios cadastra
-		item = await PictureOfTheDay.cadastrar(tittle, date, author, description);
+		item = await PictureOfTheDay.cadastrar(tittle, date, author, description, picture);
 	}
 	res.redirect('/newPicture');
 });

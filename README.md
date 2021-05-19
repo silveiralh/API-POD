@@ -18,7 +18,7 @@ Luiz Henrique Carvalho Silveira - **1136658**
 <p>:ballot_box_with_check:  A utilização de Frameworks de desenvolvimento de aplicações web.
 <p>:ballot_box_with_check:  Verificação de preenchimento de campos obrigatórios.
 <p>:black_square_button:  Validacão de unicidade e autenticidade de campos como email e login.
-<p>:ballot_box_with_check:  Permissão de publicação apenas ao adminstrador do sistema, verificada com o uso de sessões.
+<p>:black_square_button:  Permissão de publicação apenas ao adminstrador do sistema, verificada com o uso de sessões. 
 <p>:ballot_box_with_check:  Instalação da página web em algum serviço de hospedagem de aplicações web.
 <p>:ballot_box_with_check:  Implementação da funcionalidade de Login. 
 <p>:ballot_box_with_check:  Implementação da funcionalidade de Cadastramento de usuários.

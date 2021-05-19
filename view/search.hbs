@@ -13,7 +13,7 @@
         <header class="side-column">
             <div class="light center"><input type="hidden" id="hiddenflag" name="hiddenflag" value="{{admin}}">
                 <form method="get">
-                    <h2>ENTRE COM A DATA</h2>
+                    <h2>PESQUISAR POR DATA</h2>
                     <input type="date" min="2021-05-10" name="date" id="inputDate" max="">
                     <div class="error" id="error"></div>
                     <button id="buscar" type="submit">BUSCAR</button>
@@ -30,7 +30,7 @@
                 <article>{{#picture}}
                     <div class="picture">
                         <h1></h1>
-                        <img id="picture" src="data:image/png;base64, {{imagem}}" alt="">
+                        <img id="picture" src="data:image/jpg;base64, {{picture}}" alt="">
                     </div>
                     <div>
                         <h1 class="title" id="tittle">{{tittle}}</h1>
@@ -45,10 +45,9 @@
                     <script type="text/javascript">
                         document.querySelector("#buscar").addEventListener("click", verificaCampo);
                         document.querySelector("body").addEventListener("click", function (e) {
-                            var anchor = e.target.closest('a');
                             var flag = document.querySelector("#hiddenflag").value;
                             var errorAccess = document.getElementById("errorAccess");
-                            if (anchor !== null) {
+                            if (flag == 0) {
                                 errorAccess.innerHTML = "Acesso apenas para administrador";
                             }
                         }, false);

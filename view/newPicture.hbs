@@ -20,7 +20,6 @@
     <div class="side">
         <header class="side-column">
             <div class="light center">
-                <!--- <input type="text" name="busca" value="" placeholder="AAAA-MM-DD"/> -->
                 <a class=" item mb-5" href="/search">Pesquisar </a>
                 <br> <br>
                 <a class="mt-5 item" href="/logout">Sair </a>
@@ -34,7 +33,7 @@
                             <div class="col-12 text-center">
                                 <h4 class="mx-auto mt-4">Cadastro de imagem do dia</h4>
                             </div>
-                            <form class="mx-auto" action="upload" enctype="multipart/form-data" method="post">
+                            <form class="mx-auto" id="newPicture" enctype="multipart/form-data" method="post">
                                 <div class="row form-group ">
                                     <div class="col-6 ">
                                         <label>Titulo</label>
@@ -48,21 +47,22 @@
                                 <div class="row form-group ">
                                     <div class="col-6 ">
                                         <label>Data</label>
-                                        <input type="date" class="ml-1 form-control" min="2021-05-10" name="date"
+                                        <input type="date" class="ml-1 form-control" min="2021-05-10" id="inputDate" name="date"
                                             required />
                                     </div>
                                     <div class="col-6 ">
                                         <label>Imagem</label>
-                                        <input type="file" class="ml-1 form-control" name="picture" />
+                                        <input type="file" class="ml-1 form-control" name="picture" 
+                                            required />
                                     </div>
                                 </div>
                                 <div class="mt-4 mx-auto form-group">
                                     <label>Descrição</label>
                                     <textarea type="text" class="form-control" value="" name="description"
                                         required></textarea>
-                                    <button class=" mt-5" type="submit">Registrar imagem</button>
+                                    <button id="register" class=" mt-5" type="submit" >Registrar imagem</button>
+                                    <div class="error" id="error"></div>
                                 </div>
-
                             </form>
                         </div>
                     </div>
