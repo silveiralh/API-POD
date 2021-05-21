@@ -40,7 +40,7 @@
                                     <input type="text" id="inputUsername" class="form-control my-2"
                                         placeholder="Username" name="username" required autofocus></input>
                                     <input type="password" id="inputPassword" class="form-control " placeholder="Senha"
-                                        name="password" required autofocus></input>
+                                        name="password" required ></input>
                                     <div class="error" id="error"></div>
                                     <button class=" mt-2 my-2" id="cadastrar" type="submit">Cadastrar</button>
                                     <div class="text-center">
@@ -66,9 +66,13 @@
             var error = document.getElementById("error");
             if (username == "" || password == "" || email == "") {
                 error.innerHTML = "Os campos não podem estar vazios!";
-            } else {
+            } else if(!email.includes('@')||!email.includes('.com')){
+                error.innerHTML = "O email precisa seguir o modelo exemplo@exemplo.com"
+            }
+            else {
                 error.innerHTML = "";
             }
+            
         }
     </script>
 </body>

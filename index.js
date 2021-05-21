@@ -28,7 +28,8 @@ app.use(cookieParser());
 app.use(session({ //não funcionou 
     secret: 'chave super secreta',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    cookie: { secure: false }
 }));
 
 // cache com o host criado no redislabs
@@ -54,7 +55,7 @@ cache.invalidate = (name) => {//FUNÇÃO DE INVALIDAÇÃO DO PROFESSOR
 // ROTAS GET
 app.get('/', cache.invalidate(), (req, res) =>{//RENDERIZA PAGINA DE LOGIN
 	if(req.cookies && req.cookies.login){
-		cache.route();
+
 		if(ADMIN==1){
 			res.redirect('/newPicture');
 		}else if(ADMIN==0){
@@ -79,6 +80,7 @@ app.get('/user', (req, res) =>{//CADASTRO DE USUARIO
 
 app.get('/newPicture', (req, res) =>{//RENDERIZA PAGINA DE CADASTRO DE IMAGEM DO DIA
 	if(req.cookies && ADMIN===1 ){
+		cache.route();
 		if(ADMIN==-1){
 			res.redirect('/');
 		}else{
@@ -91,6 +93,7 @@ app.get('/newPicture', (req, res) =>{//RENDERIZA PAGINA DE CADASTRO DE IMAGEM DO
 
 app.get('/content', async (req, res) =>{//RENDERIZA PAGINA DE BUSCA POR DATA
 	if(req.cookies && req.cookies.login ){
+		cache.route();
 		if(ADMIN==-1){
 			res.redirect('/');
 		}else{
@@ -107,6 +110,7 @@ app.get('/logout',cache.invalidate(),  async (req,res) =>{ //LOGOUT COM INVALIDA
 	res.cookie('login', ADMIN);
 	res.clearCookie('login');
 	res.clearCookie('connect.sid');
+	req.session.destroy();
 	res.redirect('/');
 });
 
@@ -117,11 +121,10 @@ app.post('/', async (req,res) =>{//REALIZA LOGIN
 	if(username!==""&&password!==""){
 		ADMIN = await User.logar(username,password);
 		if(ADMIN!==-1){
-			// res.cookie('login', ADMIN);
+			res.cookie('login', ADMIN);
 			if (ADMIN==1){
 				req.session.login = 1;
 				res.redirect('/newPicture');
-				// res.end();
 			}else {
 				req.session.login = 0;
 				res.redirect('/content');

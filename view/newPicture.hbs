@@ -37,17 +37,17 @@
                                 <div class="row form-group ">
                                     <div class="col-6 ">
                                         <label>Titulo</label>
-                                        <input type="text" class="ml-1 form-control" name="tittle" value="" required />
+                                        <input type="text" id="inputTittle" class="ml-1 form-control" name="tittle" value="" required />
                                     </div>
                                     <div class="col-6 ">
                                         <label>Autor</label>
-                                        <input type="text" class="ml-1 form-control" name="author" value="" required />
+                                        <input type="text" id="inputAutor" class="ml-1 form-control" name="author" value="" required />
                                     </div>
                                 </div>
                                 <div class="row form-group ">
                                     <div class="col-6 ">
                                         <label>Data</label>
-                                        <input type="date" class="ml-1 form-control" min="2021-05-10" id="inputDate" name="date"
+                                        <input type="date" id="inputData" class="ml-1 form-control" min="2021-05-10" id="inputDate" name="date"
                                             required />
                                     </div>
                                     <div class="col-6 ">
@@ -58,12 +58,31 @@
                                 </div>
                                 <div class="mt-4 mx-auto form-group">
                                     <label>Descrição</label>
-                                    <textarea type="text" class="form-control" value="" name="description"
+                                    <textarea type="text" id="inputDescricao" class="form-control" value="" name="description"
                                         required></textarea>
-                                    <button id="user" class=" mt-5" type="submit" >Registrar imagem</button>
+                                    <button id="user" id="cadastrar" class=" mt-5" type="submit" >Registrar imagem</button>
                                     <div class="error" id="error"></div>
                                 </div>
                             </form>
+                            <script type="text/javascript">
+                                document.querySelector("#cadastrar").addEventListener("click", verificaCampos);
+
+
+                                function verificaCampos() {
+                                    var tittle = document.querySelector("#inputTittle").value;
+                                    var author = document.querySelector("#inputAutor").value;
+                                    var data = document.querySelector("#inputData").value;
+                                    var descricao = document.querySelector("#inputData").value;
+                                    var error = document.getElementById("error");
+                                    if (tittle == "" || author == "" || data == "" || descricao=="") {
+                                        error.innerHTML = "Os campos não podem estar vazios!";
+                                    } 
+                                    else {
+                                        error.innerHTML = "";
+                                    }
+                                    
+                                }
+                            </script>
                         </div>
                     </div>
                 </article>
