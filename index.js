@@ -25,12 +25,11 @@ app.set('views',path.join(__dirname,'view'));
 app.use(express.static(path.join(__dirname,'styles')));
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
-// app.use(session({ //não funcionou 
-//     secret: 'chave super secreta',
-//     resave: false,
-//     saveUninitialized: true,
-//     cookie: { secure: false }
-// }));
+app.use(session({ //não funcionou 
+    secret: 'chave super secreta',
+    resave: false,
+    saveUninitialized: true
+}));
 
 // cache com o host criado no redislabs
 cache = cache({
@@ -55,25 +54,26 @@ cache.invalidate = (name) => {//FUNÇÃO DE INVALIDAÇÃO DO PROFESSOR
 // ROTAS GET
 app.get('/', cache.invalidate(), (req, res) =>{//RENDERIZA PAGINA DE LOGIN
 	if(req.cookies && req.cookies.login){
+		cache.route();
 		if(ADMIN==1){
 			res.redirect('/newPicture');
 		}else if(ADMIN==0){
-			res.redirect('/search');
+			res.redirect('/content');
 		}
 	}else{
 		res.render('login');
 	}
 });
 
-app.get('/register', (req, res) =>{//CADASTRO DE USUARIO
+app.get('/user', (req, res) =>{//CADASTRO DE USUARIO
 	if(req.cookies && req.cookies.login ){
 		if(ADMIN=1){
 			res.redirect('/newPicture');
 		}else{
-			res.redirect('/search');
+			res.redirect('/content');
 		}
 	}else{
-		res.render('register');
+		res.render('user');
 	}
 });
 
@@ -85,17 +85,17 @@ app.get('/newPicture', (req, res) =>{//RENDERIZA PAGINA DE CADASTRO DE IMAGEM DO
 			res.render('newPicture',{admin: req.cookies.login});
 		}
 	}else{
-		res.redirect('/search');
+		res.redirect('/content');
 	}
 });
 
-app.get('/search', async (req, res) =>{//RENDERIZA PAGINA DE BUSCA POR DATA
+app.get('/content', async (req, res) =>{//RENDERIZA PAGINA DE BUSCA POR DATA
 	if(req.cookies && req.cookies.login ){
 		if(ADMIN==-1){
 			res.redirect('/');
 		}else{
 			let picture = await PictureOfTheDay.buscar(req.query.date) ;
-			res.render('search',{picture:picture, admin: req.cookies.login});
+			res.render('content',{picture:picture, admin: req.cookies.login});
 		}
 	}else{
 		res.redirect('/');
@@ -117,20 +117,24 @@ app.post('/', async (req,res) =>{//REALIZA LOGIN
 	if(username!==""&&password!==""){
 		ADMIN = await User.logar(username,password);
 		if(ADMIN!==-1){
-			res.cookie('login', ADMIN);
+			// res.cookie('login', ADMIN);
 			if (ADMIN==1){
+				req.session.login = 1;
 				res.redirect('/newPicture');
+				// res.end();
 			}else {
-				res.redirect('/search');
+				req.session.login = 0;
+				res.redirect('/content');
 			}
 			return;
 		}else{
+			req.session.login = -1;
 			res.redirect('/');
 		}
 	}
 });
 
-app.post('/register', cache.invalidate(), async (req,res) =>{//REALIZA O CADASTRO DE UM NOVO USUARIO VALOR PADRÃO DE PERMISSÃO=0
+app.post('/user', cache.invalidate(), async (req,res) =>{//REALIZA O CADASTRO DE UM NOVO USUARIO VALOR PADRÃO DE PERMISSÃO=0
 	const email = req.body.email;
 	const username = req.body.username;
 	const password = req.body.password;
